@@ -130,7 +130,7 @@ app.post("/auth/register", async (req, res) => {
 
     try {
         connection.query(
-            "SELECT * FROM Users WHERE email = ? OR username = ?",
+            "SELECT * FROM users WHERE email = ? OR username = ?",
             [email, username],
             async (err, results) => {
                 if(err) return res.status(500).json({ message: "Server error." });
@@ -147,7 +147,7 @@ app.post("/auth/register", async (req, res) => {
                 const code_expires = new Date(Date.now() + 15 * 60 * 1000); // 15 mins
 
                 connection.query(
-                    `INSERT INTO Users 
+                    `INSERT INTO users 
                     (username, email, password, verified, verify_code, code_expires) 
                     VALUES (?, ?, ?, FALSE, ?, ?)`,
                     [username, email, hashed, verify_code, code_expires],
@@ -201,7 +201,7 @@ app.post("/auth/login", (req, res) => {
     }
 
     connection.query(
-        "SELECT * FROM Users WHERE email = ?",
+        "SELECT * FROM users WHERE email = ?",
         [email],
         async (err, results) => {
             if(err) return res.status(500).json({ message: "Server error." });
@@ -233,7 +233,7 @@ app.post("/auth/verify", (req, res) => {
     const { email, code } = req.body;
 
     connection.query(
-        "SELECT * FROM Users WHERE email = ?",
+        "SELECT * FROM users WHERE email = ?",
         [email],
         (err, results) => {
             if(err) return res.status(500).json({ message: "Server error." });
@@ -251,7 +251,7 @@ app.post("/auth/verify", (req, res) => {
 
             // mark as verified
             connection.query(
-                "UPDATE Users SET verified = TRUE, verify_code = NULL, code_expires = NULL WHERE email = ?",
+                "UPDATE users SET verified = TRUE, verify_code = NULL, code_expires = NULL WHERE email = ?",
                 [email],
                 (err) => {
                     if(err) return res.status(500).json({ message: "Server error." });
